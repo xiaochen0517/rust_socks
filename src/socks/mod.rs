@@ -7,11 +7,11 @@ mod structs;
 mod handshake;
 mod utils;
 mod forward;
+mod parser;
 
 pub async fn handle_connection(stream: TcpStream) -> Result<(), String> {
     // 处理连接
-    let buf = [0u8; 1024];
-    let connection = Connection { buf, stream };
+    let connection = Connection::new(stream);
     let connection = handshake(connection).await?;
     let _connection = forward(connection).await?;
     Ok(())

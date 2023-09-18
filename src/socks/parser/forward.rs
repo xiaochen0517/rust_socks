@@ -1,5 +1,5 @@
-use crate::socks::structs::{ForwardRequest, SocksAddressType};
 use crate::socks::structs::{get_socks_address_type, get_socks_cmd};
+use crate::socks::structs::{ForwardRequest, SocksAddressType};
 
 pub fn parse(data: &Vec<u8>) -> Result<ForwardRequest, String> {
     if data.len() < 7 {
@@ -11,9 +11,22 @@ pub fn parse(data: &Vec<u8>) -> Result<ForwardRequest, String> {
     let address_type = get_socks_address_type(&data[3])?;
     let host = data[4..data.len() - 2].to_vec();
     let port = data[data.len() - 2..].to_vec();
-    let address = format!("{}.{}.{}.{}:{}", host[0], host[1], host[2], host[3],
-                          u16::from_be_bytes([port[0], port[1]]));
-    Ok(ForwardRequest { version, cmd: command, address_type, host, port, address })
+    let address = format!(
+        "{}.{}.{}.{}:{}",
+        host[0],
+        host[1],
+        host[2],
+        host[3],
+        u16::from_be_bytes([port[0], port[1]])
+    );
+    Ok(ForwardRequest {
+        version,
+        cmd: command,
+        address_type,
+        host,
+        port,
+        address,
+    })
 }
 
 pub fn build_response(request: &ForwardRequest, status: u8) -> Vec<u8> {

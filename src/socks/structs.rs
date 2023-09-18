@@ -10,18 +10,10 @@ pub enum SocksCMD {
 
 pub fn get_socks_cmd(cmd: &u8) -> Result<SocksCMD, String> {
     return match *cmd {
-        0x01u8 => {
-            Ok(SocksCMD::Connect)
-        }
-        0x02u8 => {
-            Ok(SocksCMD::Bind)
-        }
-        0x03u8 => {
-            Ok(SocksCMD::UdpAssociate)
-        }
-        _ => {
-            Err("不支持的命令".to_string())
-        }
+        0x01u8 => Ok(SocksCMD::Connect),
+        0x02u8 => Ok(SocksCMD::Bind),
+        0x03u8 => Ok(SocksCMD::UdpAssociate),
+        _ => Err("不支持的命令".to_string()),
     };
 }
 
@@ -34,18 +26,10 @@ pub enum SocksAddressType {
 
 pub fn get_socks_address_type(types: &u8) -> Result<SocksAddressType, String> {
     return match *types {
-        0x01u8 => {
-            Ok(SocksAddressType::IPv4)
-        }
-        0x03u8 => {
-            Ok(SocksAddressType::Domain)
-        }
-        0x04u8 => {
-            Ok(SocksAddressType::IPv6)
-        }
-        _ => {
-            Err("不支持的地址类型".to_string())
-        }
+        0x01u8 => Ok(SocksAddressType::IPv4),
+        0x03u8 => Ok(SocksAddressType::Domain),
+        0x04u8 => Ok(SocksAddressType::IPv6),
+        _ => Err("不支持的地址类型".to_string()),
     };
 }
 
@@ -63,17 +47,21 @@ impl Connection {
     }
 
     pub async fn read(&mut self) -> Result<Vec<u8>, String> {
-        let data_length = self.stream.read(&mut self.buf).await
+        let data_length = self
+            .stream
+            .read(&mut self.buf)
+            .await
             .map_err(|err| err.to_string())?;
         let data = self.buf[..data_length].to_vec();
         Ok(data)
     }
 
     pub async fn write(&mut self, data: &[u8]) -> Result<(), String> {
-        self.stream.write(data).await
+        self.stream
+            .write(data)
+            .await
             .map_err(|err| err.to_string())?;
-        self.stream.flush().await
-            .map_err(|err| err.to_string())?;
+        self.stream.flush().await.map_err(|err| err.to_string())?;
         Ok(())
     }
 }

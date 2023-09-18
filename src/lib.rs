@@ -1,5 +1,5 @@
-use tokio::net::TcpListener;
 use crate::socks::handle_connection;
+use tokio::net::TcpListener;
 
 mod socks;
 
@@ -7,7 +7,9 @@ const LISTENER_ADDR: &str = "127.0.0.1:8888";
 
 pub async fn run() {
     // 监听端口
-    let listener = TcpListener::bind(LISTENER_ADDR).await.expect("端口监听失败");
+    let listener = TcpListener::bind(LISTENER_ADDR)
+        .await
+        .expect("端口监听失败");
     println!("启动监听: {}", format!("socks5://{}/", LISTENER_ADDR));
     // 循环监听
     loop {

@@ -13,6 +13,6 @@ pub async fn handle_connection(stream: TcpStream) -> Result<(), String> {
     // 处理连接
     let connection = Connection::new(stream);
     let connection = handshake(connection).await?;
-    let _connection = forward(connection).await?;
+    forward(connection).await?;
     Ok(())
 }

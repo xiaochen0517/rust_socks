@@ -8,11 +8,45 @@ pub enum SocksCMD {
     UdpAssociate,
 }
 
+pub fn get_socks_cmd(cmd: &u8) -> Result<SocksCMD, String> {
+    return match *cmd {
+        0x01u8 => {
+            Ok(SocksCMD::Connect)
+        }
+        0x02u8 => {
+            Ok(SocksCMD::Bind)
+        }
+        0x03u8 => {
+            Ok(SocksCMD::UdpAssociate)
+        }
+        _ => {
+            Err("不支持的命令".to_string())
+        }
+    };
+}
+
 #[derive(Debug)]
 pub enum SocksAddressType {
     IPv4,
     Domain,
     IPv6,
+}
+
+pub fn get_socks_address_type(types: &u8) -> Result<SocksAddressType, String> {
+    return match *types {
+        0x01u8 => {
+            Ok(SocksAddressType::IPv4)
+        }
+        0x03u8 => {
+            Ok(SocksAddressType::Domain)
+        }
+        0x04u8 => {
+            Ok(SocksAddressType::IPv6)
+        }
+        _ => {
+            Err("不支持的地址类型".to_string())
+        }
+    };
 }
 
 pub struct Connection {
@@ -73,4 +107,14 @@ impl HandShakeResponse {
             method: 0x00u8,
         }
     }
+}
+
+#[derive(Debug)]
+pub struct ForwardRequest {
+    pub(crate) version: u8,
+    pub(crate) cmd: SocksCMD,
+    pub(crate) address_type: SocksAddressType,
+    pub(crate) host: Vec<u8>,
+    pub(crate) port: Vec<u8>,
+    pub(crate) address: String,
 }
